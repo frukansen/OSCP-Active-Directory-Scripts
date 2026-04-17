@@ -67,7 +67,7 @@ foreach ($group in $(LDAPSearch -LDAPQuery "(objectCategory=group)")) {
     
 - Eğer **Grup A**, **Grup B**'nin üyesiyse; Grup A'daki kullanıcılar Grup B'nin izinlerini devralır.
     
-- Bu script ile `member` özniteliğini kontrol ederek, grup içinde grup olup olmadığını tespit edebilir ve yetki yükseltme (privilege escalation) yolları bulabilirsin.
+- Bu script ile `member` özniteliğini kontrol ederek, grup içinde grup olup olmadığını tespit edebilir ve privilege escalation yolları bulabilirsin.
     
 
 🔗 **Tam Script İçin:** [OSCP-Active-Directory-Scripts/enumeration-LDAPquery.ps1](https://github.com/frukansen/OSCP-Active-Directory-Scripts/blob/main/enumeration-LDAPquery)
