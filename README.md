@@ -1,30 +1,31 @@
-## 🛠️ Temel .NET Sınıfları
+## 🛠️ Core .NET Classes
 
-AD içerisinde arama yapmak için `System.DirectoryServices` altındaki iki ana sınıf kullanılır:
+To perform searches within AD, two main classes under `System.DirectoryServices` are used:
 
-- **DirectoryEntry:** Aramanın nereden başlayacağını (Search Root) belirler. LDAP yolunu encapsulate eder.
+- **DirectoryEntry:** Determines where the search will begin (Search Root). It encapsulates the LDAP path.
     
-- **DirectorySearcher:** Belirlenen root üzerinde LDAP filtrelerini kullanarak sorgu çalıştırır. `FindAll()` metodu ile sonuçları döner.
+- **DirectorySearcher:** Executes queries on the specified root using LDAP filters. It returns the results via the `FindAll()` method.
     
 
-## 🔍 Filtreleme ve samAccountType
+## 🔍 Filtering and samAccountType
 
-Aramaları daraltmak için en etkili yöntem `samAccountType` özniteliğini kullanmaktır.
+The most effective method for narrowing down searches is using the `samAccountType` attribute.
 
-|**Hesap Türü**|**Kod (Decimal)**|**Açıklama**|
+|**Account Type**|**Code (Decimal)**|**Description**|
 |---|---|---|
-|**User**|`805306368`|Normal kullanıcı hesapları|
-|**Group**|`268435456`|Grup nesneleri|
-|**Computer**|`805306369`|Bilgisayar hesapları|
+|**User**|`805306368`|Standard user accounts|
+|**Group**|`268435456`|Group objects|
+|**Computer**|`805306369`|Computer accounts|
 
 ---
 
-## 🚀 Esnek Arama Fonksiyonu (LDAPSearch)
+## 🚀 Flexible Search Function (LDAPSearch)
 
-[Bu fonksiyonu](https://github.com/frukansen/OSCP-Active-Directory-Scripts/blob/main/enumeration-LDAPquery) bir kez tanımladıktan sonra oturum boyunca hızlıca sorgu atmak için kullanabilirsin.
-### Fonksiyonun Kullanımı ve Operasyonel Komutlar
+Once you define [this function](https://github.com/frukansen/OSCP-Active-Directory-Scripts/blob/main/enumeration-LDAPquery), you can use it to quickly run queries throughout your session.
 
-**1. Fonksiyonu Hafızaya Alma:**
+### Function Usage and Operational Commands
+
+**1. Loading the Function into Memory:**
 
 PowerShell
 
@@ -32,7 +33,7 @@ PowerShell
 Import-Module .\enumeration.ps1
 ```
 
-**2. Tüm Kullanıcıları Listeleme:**
+**2. Listing All Users:**
 
 PowerShell
 
@@ -40,7 +41,7 @@ PowerShell
 LDAPSearch -LDAPQuery "(samAccountType=805306368)"
 ```
 
-**3. Belirli Bir Grubu ve Üyelerini (Nested Dahil) Bulma:** `net group` komutu sadece doğrudan üyeleri gösterirken, bu yöntemle iç içe geçmiş (nested) grupları da görebilirsin.
+**3. Finding a Specific Group and Its Members (Including Nested):** While the `net group` command only shows direct members, this method allows you to discover nested groups as well.
 
 PowerShell
 
@@ -49,7 +50,7 @@ $targetGroup = LDAPSearch -LDAPQuery "(&(objectCategory=group)(cn=Sales Departme
 $targetGroup.properties.member
 ```
 
-**4. Tüm Grupları ve Üyelerini Ekrana Basma:**
+**4. Printing All Groups and Their Members:**
 
 PowerShell
 
@@ -61,13 +62,13 @@ foreach ($group in $(LDAPSearch -LDAPQuery "(objectCategory=group)")) {
 
 ---
 
-## ⚠️ Kritik Bilgi: Nested Groups (İç İçe Gruplar)
+## ⚠️ Critical Info: Nested Groups
 
-- `net.exe` gibi araçlar sadece o gruba doğrudan atanmış kullanıcıları listeler.
+- Tools like `net.exe` only list users directly assigned to that group.
     
-- Eğer **Grup A**, **Grup B**'nin üyesiyse; Grup A'daki kullanıcılar Grup B'nin izinlerini devralır.
+- If **Group A** is a member of **Group B**, the users in Group A inherit the permissions of Group B.
     
-- Bu script ile `member` özniteliğini kontrol ederek, grup içinde grup olup olmadığını tespit edebilir ve privilege escalation yolları bulabilirsin.
+- By checking the `member` attribute with this script, you can detect if there are groups within groups and identify potential privilege escalation paths.
     
 
-🔗 **Tam Script İçin:** [OSCP-Active-Directory-Scripts/enumeration-LDAPquery.ps1](https://github.com/frukansen/OSCP-Active-Directory-Scripts/blob/main/enumeration-LDAPquery)
+🔗 **For the Full Script:** [OSCP-Active-Directory-Scripts/enumeration-LDAPquery.ps1](https://github.com/frukansen/OSCP-Active-Directory-Scripts/blob/main/enumeration-LDAPquery)
